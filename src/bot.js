@@ -25,6 +25,8 @@ const choices = [
 bot.on('ready', () => {
   console.log('[i] Bot is now ready!')
 
+  bot.user.setGame('with joe mama')
+
   bot.generateInvite([ 'MANAGE_MESSAGES', 'MANAGE_ROLES' ])
     .then(link => {
       console.log('[i] Invite link: ' + link)
