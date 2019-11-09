@@ -6,6 +6,7 @@ const Discord = require('discord.js')
 const bot = new Discord.Client()
 bot.login(process.env.TOKEN)
 
+const pf = "!"
 const msgs = [
   "STOP YOU'RE RUINING THE SOUP",
   "NOOOOOOOOOOOOOOOOOOO",
@@ -13,6 +14,11 @@ const msgs = [
   "BRO CAN YOU NOT?",
   "DUDE CHILL THIS ISN'T #GENERAL",
   "WHAT ARE YOU DOINGGGGGGGGGG"
+]
+const choices = [
+  "ROCK",
+  "PAPER",
+  "SCISSORS"
 ]
 
 // When bot is ready
@@ -30,9 +36,56 @@ bot.on('message', msg => {
   if (msg.author.bot)
     return
 
-  if (msg.guild.id === '641113927446691860' && msg.channel.id === '642182281284550689')
-    if (!checkURL(msg.content))
-      complain(msg)
+  if (msg.guild.id === '641113927446691860') {
+    if (msg.channel.id === '642182281284550689') {
+      if (!checkURL(msg.content))
+        complain(msg)
+    } else if (msg.channel.id === '642557700458151976' && msg.content.startsWith(pf)) {
+      const args = msg.content.split(" ")
+      const command = args.shift().substring(pf.length).toUpperCase()
+      const now = new Date()
+
+      if (command === "PING") {
+        msg.channel.send("Pong!")
+      } else if (command === "REMINDME") {
+        msg.reply(`I'll remind you in ${args[0]} seconds!`)
+
+        setTimeout(() => {
+          msg.reply(args.slice(1).join(' '))
+        }, args[0] * 1000)
+      } else if (command === "RPS") {
+        const userChoice = args[0].toUpperCase()
+        const botChoice = choices[Math.floor(Math.random() * choices.length)]
+
+        msg.channel.send(`You picked: ${userChoice}\nI picked: ${botChoice}`)
+
+        if (userChoice === botChoice) {
+          msg.reply("It's a draw!")
+        } else if (userChoice === "ROCK") {
+          if (botChoice === "PAPER")
+            msg.reply("I win!")
+          else if (botChoice === "SCISSORS")
+            msg.reply("You win!")
+        } else if (userChoice === "PAPER") {
+          if (botChoice === "SCISSORS")
+            msg.reply("I win!")
+          else if (botChoice === "ROCK")
+            msg.reply("You win!")
+        } else {
+          if (botChoice === "ROCK")
+            msg.reply("I win!")
+          else if (botChoice === "PAPER")
+            msg.reply("You win!")
+        }
+      } else if (command === "TIME") {
+        msg.reply("The time right now is: " + now.toLocaleTimeString())
+      } else if (command === "DATE") {
+        msg.reply("The date right now is: " + now.toLocaleDateString())
+      } else {
+        msg.channel.send("Sorry, I didn't recognize that command!")
+      }
+    }
+  }
 })
 
 bot.on('guildMemberAdd', member => {
